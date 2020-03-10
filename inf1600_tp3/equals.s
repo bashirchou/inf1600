@@ -27,7 +27,7 @@ conditionBoucleColonne:
         cmp %edx, %ecx
         jl boucleColonne    /* c < matorder */
         movl $0, -8(%ebp)    /* Remet la valeur de c a 0 (colonne) */
-        inc -4(%ebp)      /* ++r (colonne) */
+        add $1, -4(%ebp)      /* ++r (colonne) */
         jmp conditionBoucleLigne
 
 boucleColonne:
@@ -39,14 +39,15 @@ boucleColonne:
         movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (colonne) */
         add %eax, %ecx      /* %ecx <- (r * matorder) + c */
 
-        movl -8(%ebp), %eax  /* Met la valeur de c dans %eax  (colonne)*/
-        movl (%ecx,%eax,4),%ecx  /* Enregistre le pointeur de inmatdata1 dans %eax */
-        movl (%ecx,%eax,4),%edx /* Enregistre le pointeur de inmatdata2 dans %ecx */
+        movl 8(%ebp), %ecx  /* Met la valeur de debut de inmatdata1*/
+        movl 12(%ebp), %edx  /* Met la valeur de debut de inmatdata2*/
+        movl (%ecx,%eax,4),%ecx  /* Enregistre la valeur de inmatdata1 a la bonne position dans %eax */
+        movl (%edx,%eax,4),%edx  /* Enregistre la valeur de inmatdata2 a la bonne position dans %edx */
 
         cmp %ecx, %edx   /* inmatdata1[c + r * matorder] != inmatdata2[c + r * matorder]  */
         jne notEqual 
 
-        inc -8(%ebp)    /* ++c  */
+        add $1, -8(%ebp)    /* ++c  */
         jmp conditionBoucleColonne
 equal:
         movl $1, %eax
