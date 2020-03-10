@@ -35,10 +35,13 @@ boucleColonne:
         add %eax, %ecx      /* c + r * matorder */
         movl %ecx, %edx
 
-        movl 8(%ebp), %eax     /* Enregistre le inmatdata1 dans %eax */
-        movl 12(%ebp), %ecx     /* Enregistre le inmatdata2 dans %ecx */
+        movl 8(%ebp), %eax     /* Enregistre le pointeur de inmatdata1 dans %eax */
+        movl 12(%ebp), %ecx     /* Enregistre le pointeur de inmatdata2 dans %ecx */
+        push %ebx   /* Sauvegarde %ebx */
 
-        cmp %eax(%edx), %ecx(%edx)   /* inmatdata1[c + r * matorder] != inmatdata2[c + r * matorder]  */
+        movl %eax(%edx), %ebx
+        cmp %ebx, %ecx(%edx)   /* inmatdata1[c + r * matorder] != inmatdata2[c + r * matorder]  */
+        pop %ebx
         jne notEqual 
 
         movl -4(%ebp), %eax     /* Rétablir les données */
