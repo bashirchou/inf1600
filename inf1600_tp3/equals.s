@@ -10,45 +10,43 @@ matrix_equals_asm:
         16(%ebp) = param3
         */
         sub $8, %esp /* Fait de L'espace pour r et c */
-        movl $0, %eax    /* Met la valeur de r dans eax */
-        movl $0, %ecx    /* Met la valeur de c dans ecx */
-        movl 16(%ebp), %edx    /* Met la valeur de matorder dans edx */
+        movl $0, -4(%ebp)    /* Met la valeur de r dans memoire  (ligne) */
+        movl $0, -8(%ebp)    /* Met la valeur de c dans memoire (colonne)*/
         jmp conditionBoucleLigne
 
 
 conditionBoucleLigne:
+        movl 16(%ebp), %edx  /* Met la valeur de matorder dans %edx */
+        movl -4(%ebp), %eax     /* Met la valeur de r dans %eax  (ligne) */
         cmp %edx, %eax
         jl conditionBoucleColonne    /* r < matorder */
         jmp equal
 conditionBoucleColonne:
+        movl 16(%ebp), %edx  /* Met la valeur de matorder dans %edx */
+        movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (COlonne) */
         cmp %edx, %ecx
         jl boucleColonne    /* c < matorder */
-        movl $0, %ecx    /* Remet la valeur de c a 0 */
-        inc %eax  
+        movl $0, -8(%ebp)    /* Remet la valeur de c a 0 (colonne) */
+        inc -4(%ebp)      /* ++r (colonne) */
         jmp conditionBoucleLigne
 
 boucleColonne:
+        movl 16(%ebp), %eax  /* Met la valeur de matorder dans %eax */
+        movl -4(%ebp), %ecx     /* Met la valeur de r dans %ecx  (ligne) */
+        movl $0, %edx   /* Précaution comme montrer par le prof */
+        mul %ecx       /* edx#eax <- eax * %ecx */
 
-        movl %eax,-4(%ebp)    /* Enregistre le r dans la mémoire */
-        movl %ecx,-8(%ebp)    /* Enregistre le c dans la mémoire */
-        mul %edx       /* edx#eax  eax * source32 */
-        add %eax, %ecx      /* c + r * matorder */
-        movl %ecx, %edx
+        movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (colonne) */
+        add %eax, %ecx      /* %ecx <- (r * matorder) + c */
 
-        movl 8(%ebp), %eax     /* Enregistre le pointeur de inmatdata1 dans %eax */
-        movl 12(%ebp), %ecx     /* Enregistre le pointeur de inmatdata2 dans %ecx */
-        push %ebx   /* Sauvegarde %ebx */
+        movl -8(%ebp), %eax  /* Met la valeur de c dans %eax  (colonne)*/
+        movl (%ecx,%eax,4),%ecx  /* Enregistre le pointeur de inmatdata1 dans %eax */
+        movl (%ecx,%eax,4),%edx /* Enregistre le pointeur de inmatdata2 dans %ecx */
 
-        movl %eax(%edx), %ebx
-        cmp %ebx, %ecx(%edx)   /* inmatdata1[c + r * matorder] != inmatdata2[c + r * matorder]  */
-        pop %ebx
+        cmp %ecx, %edx   /* inmatdata1[c + r * matorder] != inmatdata2[c + r * matorder]  */
         jne notEqual 
 
-        movl -4(%ebp), %eax     /* Rétablir les données */
-        movl -8(%ebp), %ecx
-        movl 16(%ebp), %edx    /* Met la valeur de matorder dans edx */
-
-        inc %ecx
+        inc -8(%ebp)    /* ++c  */
         jmp conditionBoucleColonne
 equal:
         movl $1, %eax
