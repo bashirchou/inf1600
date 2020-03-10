@@ -31,21 +31,19 @@ conditionBoucleColonne:
         jmp conditionBoucleLigne
 
 boucleColonne:
-        movl 16(%ebp), %eax
-        movl -8(%ebp), %edx
-        mul %edx
-        addl -4(%ebp), %eax
+        movl 16(%ebp), %eax  /* Met la valeur de matorder dans %eax */
+        movl -4(%ebp), %ecx     /* Met la valeur de r dans %ecx  (ligne) */
+        movl $0, %edx   /* Précaution comme montrer par le prof */
+        mul %ecx       /* edx#eax <- eax * %ecx */
 
-        movl 8(%ebp), %ecx
-        movl (%ecx,%eax,4),%ecx
+        movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (colonne) */
+        add %eax, %ecx      /* %ecx <- (r * matorder) + c */
 
-        movl 16(%ebp), %eax
-        movl -4(%ebp), %edx
-        mul %edx
-        addl -8(%ebp), %eax
+        movl 8(%ebp), %ecx  /* Met la valeur de debut de outmatdata*/
+        movl 12(%ebp), %edx  /* Met la valeur de debut de inmatdata*/
+        movl (%edx,%eax,4),%edx  /* Enregistre la valeur de inmatdata a la bonne position dans %edx */
 
-        movl 12(%ebp), %edx
-        movl %ecx, (%edx,%eax,4)
+        movl  (%ecx,%eax,4), %edx  /* outmatdata[c + r * matorder] = inmatdata[r + c * matorder];  */
 
         add $1, -8(%ebp)    /* ++c  */
         jmp conditionBoucleColonne
