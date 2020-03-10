@@ -36,7 +36,7 @@ static void matrix_row_aver(const int* inmatdata, int* outmatdata, int matorder)
 static void matrix_multiply(const int* inmatdata1, const int* inmatdata2, int* outmatdata, int matorder);
 
 /* Functions to implement in assembler */
-extern int matrix_equals_asm(const int* inmatdata1, const int* inmatdata2, int matorder);
+extern int matrix_equals_asm(const int* inmatdata1, const int* inmatdata2, int S);
 extern void matrix_transpose_asm(const int* inmatdata, int* outmatdata, int matorder);
 extern void matrix_diagonal_asm(const int* inmatdata, int* outmatdata, int matorder);
 extern void matrix_row_aver_asm(const int* inmatdata, int* outmatdata, int matorder);
