@@ -19,13 +19,13 @@ conditionBoucleLigne:
         movl 16(%ebp), %edx  /* Met la valeur de matorder dans %edx */
         movl -4(%ebp), %eax     /* Met la valeur de r dans %eax  (ligne) */
         cmp %edx, %eax
-        jae conditionBoucleColonne    /* r < matorder */
+        jl conditionBoucleColonne    /* r < matorder */
         jmp fin
 conditionBoucleColonne:
         movl 16(%ebp), %edx  /* Met la valeur de matorder dans %edx */
         movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (COlonne) */
         cmp %edx, %ecx
-        jae boucleColonne    /* c < matorder */
+        jl boucleColonne    /* c < matorder */
         movl $0, -8(%ebp)    /* Remet la valeur de c a 0 (colonne) */
         add $1, -4(%ebp)      /* ++r (colonne) */
         jmp conditionBoucleLigne
@@ -36,12 +36,12 @@ boucleColonne:
         movl $0, %edx   /* Précaution comme montrer par le prof */
         mul %ecx       /* edx#eax <- eax * %ecx */
 
-        movl -4(%ebp), %ecx     /* Met la valeur de r dans %ecx  (ligne) */
-        add %eax, %ecx      /* %ecx <- (c * matorder) + r */
+        add -4(%ebp), %eax      /* %eax <- (c * matorder) + r */
 
         
         movl 8(%ebp), %edx  /* Met la valeur de debut de inmatdata*/
-        movl (%edx,%ecx,4), %edx  /* Enregistre la valeur de inmatdata a la bonne position dans %edx */
+        movl (%edx,%eax,4), %edx  /* Enregistre la valeur de inmatdata a la bonne position dans %edx */
+        pushl %edx
         
         /* -------------- */
         
@@ -50,11 +50,11 @@ boucleColonne:
         movl $0, %edx   /* Précaution comme montrer par le prof */
         mul %ecx       /* edx#eax <- eax * %ecx */
 
-        movl -8(%ebp), %ecx     /* Met la valeur de c dans %ecx  (colonne) */
-        add %eax, %ecx      /* %ecx <- (r * matorder) + c */
+        add -8(%ebp), %eax      /* %eax <- (r * matorder) + c */
 
-        movl 12(%ebp), %eax  /* Met la valeur de debut de outmatdata*/
-        movl  %edx, (%eax, %ecx,4)  /* outmatdata[c + r * matorder] = inmatdata[r + c * matorder];  */
+        movl 12(%ebp), %ecx  /* Met la valeur de debut de outmatdata*/
+        popl %edx
+        movl  %edx, (%ecx, %eax,4)  /* outmatdata[c + r * matorder] = inmatdata[r + c * matorder];  */
 
         add $1, -8(%ebp)    /* ++c  */
         jmp conditionBoucleColonne
